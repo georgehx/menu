@@ -44,14 +44,13 @@ time_queue = []
 def normalize(df):
     profit_scale = max(df['Profit_Score'])
     time_scale = max(df['Time_Score'])
-    df['Name'] = df['Name']
     df['Profit_Score'] = df['Profit_Score'].astype(float)/profit_scale
     df['Time_Score'] = df['Time_Score'].astype(float)/time_scale
     return df
 
 
-df2 = normalize(df)
-
+df = normalize(df)
+df_new = normalize(df_new)
 
 # run this command to have pop up animation window: %matplotlib qt
 # import libraries
