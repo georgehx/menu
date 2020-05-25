@@ -1,10 +1,58 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun May 24 11:45:09 2020
+Created on Mon May 25 13:19:07 2020
 
 @author: root
 """
+
+import pandas as pd
+import os
+os.chdir('/Users/georgehan/GitHub/menu')
+os.getcwd()
+
+menu = [['French Sardines Salad', 28, 20], ['French Sardines Salad', 28, 20], ['French Sardines Salad', 28, 20], 
+        ['Lamb Chop Salad', 27, 19], 
+        ['German fried potatoes Salad', 17, 8],
+        ['Chicken salad', 18, 10], 
+        ['Lobster Salad', 26, 15],
+        ['Crab Meat Salad', 25, 15],
+        ['Egg Salad', 15, 7], 
+        ['Organic Green Salad', 14, 5],
+        ['Lamb Chop Salad', 28, 20]
+        ] 
+
+menu_new = [['Organic Green Salad', 14, 5],['Organic Green Salad', 14, 5],['Organic Green Salad', 14, 5],        
+        ['German fried potatoes Salad', 17, 8],
+        ['Chicken salad', 18, 10], 
+        ['Lobster Salad', 26, 15],
+        ['Crab Meat Salad', 25, 15],
+        ['Egg Salad', 15, 7],    
+        ['Lamb Chop Salad', 27, 19],
+        ['French Sardines Salad', 28, 20]       
+        ] 
+
+df = pd.DataFrame(menu, columns = ['Name', 'Profit_Score', 'Time_Score']) 
+df_new = pd.DataFrame(menu, columns = ['Name', 'Profit_Score', 'Time_Score']) 
+
+
+customer_queue = []
+order_queue = []
+profit_queue = []
+time_queue = []
+
+def normalize(df):
+    profit_scale = max(df['Profit_Score'])
+    time_scale = max(df['Time_Score'])
+    df['Name'] = df['Name']
+    df['Profit_Score'] = df['Profit_Score'].astype(float)/profit_scale
+    df['Time_Score'] = df['Time_Score'].astype(float)/time_scale
+    return df
+
+
+df2 = normalize(df)
+
+
 # run this command to have pop up animation window: %matplotlib qt
 # import libraries
 import numpy as np
@@ -82,7 +130,7 @@ t = np.linspace(0.0, N*dt, N+1)
 
 
 # plot the two brownian motions
-'''
+
 # formatting options
 plt.figure(figsize=(7, 3))
 plt.title('Drifted Brownian Motion', fontsize=24)
@@ -137,3 +185,5 @@ def animate(i):
 anim = animation.FuncAnimation(fig, animate, frames=frames, interval=25, blit=True)
 # save the animation as mp4 video file 
 #anim.save('drift_no_vol_bm_new.gif',writer='imagemagick')
+
+'''
