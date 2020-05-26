@@ -51,6 +51,7 @@ def normalize(df):
 
 df = normalize(df)
 df_new = normalize(df_new)
+profit_list = df['Profit_Score'].tolist()
 
 # run this command to have pop up animation window: %matplotlib qt
 # import libraries
@@ -65,12 +66,13 @@ warnings.filterwarnings("ignore")
 # set the seed
 np.random.seed(42)
 
-def brownian_motion(N, T, h, seed=42):
+def brownian_motion(df, N, T, h, l, seed=42):
     """Simulates a Brownian motion.
     
     :param int N : number of discrete steps
     :param int T: number of continuous time steps
     :param float h: variance of the increments
+    :feed list of profit_scores
     :param int seed: initial seed of the random generator
     :returns tuplpe: the brownian motion and its increments
     """
@@ -79,13 +81,36 @@ def brownian_motion(N, T, h, seed=42):
     # the normalizing constant
     dt = 1. * T/N
     # the epsilon values
-    random_increments = np.random.normal(0.0, 1.0 * h, N)*np.sqrt(dt)
-    # calculate the brownian motion
-    brownian_motion = np.cumsum(random_increments)
-    # insert the initial condition
-    brownian_motion = np.insert(brownian_motion, 0, 0.0)
     
-    return brownian_motion, random_increments
+    customer_queue = []
+    total_profit = []
+    profits = df['Profit_Score'].tolist()
+    times = df['Time_Score'].tolist()
+    curr_profit = 0
+    curr_time = 0
+    
+    for t in range(1, N):
+        total_profit[t] = curr_profit
+        random_increments[t] = curr_profit/t
+        if t >= curr_time:
+            curr_time = 0
+            random_dish = np.random.randint(0, 10)
+            curr_profit += profits[random_dish]
+            curr_time += times[random_dish]*10
+        else:
+            pass
+            
+    
+    #random_increments = np.random.normal(0.0, 1.0 * h, N)*np.sqrt(dt)
+    # calculate the brownian motion
+    #brownian_motion = np.cumsum(random_increments)
+    # insert the initial condition
+    #brownian_motion = np.insert(brownian_motion, 0, 0.0)
+    
+    return total_profit, random_increments
+
+W, _ = brownian_motion(df, N, T, 1.0, seed)
+
 
 
 def drifted_brownian_motion(mu, sigma, N, T, seed=42):
@@ -101,7 +126,7 @@ def drifted_brownian_motion(mu, sigma, N, T, seed=42):
     # set the seed
     np.random.seed(seed)
     # standard brownian motion
-    W, _ = brownian_motion(N, T ,1.0)
+    W, _ = brownian_motion(df, N, T ,1.0)
     # the normalizing constant
     dt = 1. * T/N
     # generate the time steps
@@ -119,19 +144,19 @@ N = 10000 # number of discret points
 T = 10 # number of time units
 dt = 1.0 * T/N  # total number of time steps
 
-W, _ = brownian_motion(N, T, 1.0, seed)  # standard Brownian Motion
+W, _ = brownian_motion(df, N, T, 1.0, seed)  # standard Brownian Motion
 min_W = np.min(W)  # min of W
 
-X = drifted_brownian_motion(mu, sigma, N, T, seed)  # drifted version
-max_X = np.max(X)  # max of X
+#X = drifted_brownian_motion(mu, sigma, N, T, seed)  # drifted version
+#max_X = np.max(X)  # max of X
 
-t = np.linspace(0.0, N*dt, N+1)
-
+#t = np.linspace(0.0, N*dt, N+1)
+t = np.linspace(0.0, N*10, N-1)
 
 # plot the two brownian motions
 
 # formatting options
-plt.figure(figsize=(7, 3))
+plt.figure(figsize=(14, 6))
 plt.title('Drifted Brownian Motion', fontsize=24)
 plt.xlabel('Time', fontsize=22)
 plt.ylabel('Value', fontsize=22)
@@ -140,9 +165,11 @@ plt.yticks(fontsize=18)
 
 plt.grid(True, which='major', linestyle='--', color='black', alpha=0.6)
 plt.step(t, W, where='mid', lw=1, color='#0492c2')  # bare Brownian motion
-plt.step(t, X, where='mid', lw=1, color='#ff4500')  # Brownian motion with drift
-plt.plot([t[4000], t[4000]], [W[4000], X[4000]], 'ko-', lw=2)  # vertical black line
-plt.text(t[4000] + 10*dt, (W[4000] + X[4000])/2, 'Difference = $\mu t$', fontsize=18)  # the text next to the line
+#plt.step(t, X, where='mid', lw=1, color='#ff4500')  # Brownian motion with drift
+#plt.plot([t[4000], t[4000]], [W[4000], X[4000]], 'ko-', lw=2)  # vertical black line
+#plt.plot([t[4000], t[4000]], [W[4000], X[4000]], 'ko-', lw=2)  # vertical black line
+
+#plt.text(t[4000] + 10*dt, (W[4000] + X[4000])/2, 'Difference = $\mu t$: {}'.format(X[4000]-W[4000]), fontsize=18)  # the text next to the line
 plt.show()
 '''
 
