@@ -58,6 +58,52 @@ def menu_fast(df):
 
 
 def menu_simulation(df, N, rate, l, seed=42):
+    """Runs a simulated crowd of customer.
+    
+    :param int N : number of discrete steps
+    :param int T: number of continuous time steps
+    :param int rate: frequency (minutes) for customer arriving
+    :feed list of Profit_Indexs and Time_Indexes in df format
+    :param int seed: initial seed of the random generator
+    :returns outputs time series: 
+        cumulative profits, cumulative waiting time, profit per time unit
+        next customer's waiting time, number of customer in queue
+    """
+    # set the seed
+    np.random.seed(seed)
+    
+    unit_profit = []
+    profits_output = []
+    waiting_times_output = []
+    curr_waiting_times = []
+    queue_output = []
+    profits, times = menu_regular(df)
+    total_profit = 0
+    total_waiting_time = 0
+    queue = 0
+    
+    for t in range(0, N):
+        if t%rate == 0:
+            queue += 1
+            
+        if t >= total_waiting_time:
+            random_dish = np.random.randint(0, 10)
+            #print(random_dish, end = ' ')
+            total_profit += profits[random_dish]
+            total_waiting_time += times[random_dish]
+            queue -= 1
+            #print(total_waiting_time, end = ' ')
+        else:
+            pass
+        
+        profits_output.append(total_profit)
+        unit_profit.append(total_profit/(t+1))
+        waiting_times_output.append(total_waiting_time)
+        curr_waiting_times.append(total_waiting_time-t)
+        queue_output.append(queue)
+        
+    return profits_output, waiting_times_output, unit_profit, curr_waiting_times, queue_output
+
     """Simulates a Brownian motion.
     
     :param int N : number of discrete steps
@@ -121,14 +167,16 @@ print("Total profit: ${}".format(P[-1]))
 
 
 def menu_simulation_adjusted(df, N, rate, l, seed=42):
-    """Simulates a Brownian motion.
+    """Runs a simulated crowd of customer.
     
     :param int N : number of discrete steps
     :param int T: number of continuous time steps
-    :param float h: variance of the increments
-    :feed list of Profit_Indexs
+    :param int rate: frequency (minutes) for customer arriving
+    :feed list of Profit_Indexs and Time_Indexes in df format
     :param int seed: initial seed of the random generator
-    :returns tuplpe: the brownian motion and its increments
+    :returns outputs time series: 
+        cumulative profits, cumulative waiting time, profit per time unit
+        next customer's waiting time, number of customer in queue
     """
     # set the seed
     np.random.seed(seed)
@@ -189,31 +237,31 @@ print("Total profit: ${}".format(P_adjusted[-1]))
 
 
 
-W = np.exp(np.array(P)/N)  # standard Brownian Motion
+W = np.exp(np.array(P)/N)  # take log scale of profits for better display of the differences
 min_W = np.min(W)  # min of W
 X = np.exp(np.array(P_adjusted)/N)
 max_X = np.max(X)
-#X = drifted_brownian_motion(mu, sigma, N, T, seed)  # drifted version
+#X = drifted_brownian_motion(mu, sigma, N, T, seed)  # dynamic version
 #max_X = np.max(X)  # max of X
 
 
-# plot the two brownian motions
+# plot the two Time Series of profits per unit time
 
 # formatting options
 plt.figure(figsize=(14, 6))
-plt.title('Regular Menu', fontsize=24)
+plt.title('Static Menu vs. Dynamic Menu', fontsize=24)
 plt.xlabel('Time', fontsize=22)
 plt.ylabel('Profits in $', fontsize=22)
 #plt.xticks(np.linspace(0, N, 2*T + 1), fontsize=18)
 plt.yticks(fontsize=18)
 
 plt.grid(True, which='major', linestyle='--', color='black', alpha=0.6)
-plt.step(t, W, where='mid', lw=1, color='#0492c2')  # bare Brownian motion
-plt.step(t, X, where='mid', lw=1, color='#ff4500')  # Brownian motion with drift
+plt.step(t, W, where='mid', lw=1, color='#0492c2')  # Time Series with static menu
+plt.step(t, X, where='mid', lw=1, color='#ff4500')  # Time Series with dynamic menu
 plt.plot([t[800], t[800]], [W[800], X[800]], 'ko-', lw=2)  # vertical black line
 plt.plot([t[800], t[800]], [W[800], X[800]], 'ko-', lw=2)  # vertical black line
 
-plt.text(t[800]-100, (W[800] + X[800])/2-1, 'Difference in Profits : ${}'.format(X[800]-W[800]), fontsize=18)  # the text next to the line
+plt.text(t[800]-100, (W[800] + X[800])/2-1, 'Diff. in ${:.4f}'.format(X[800]-W[800]), fontsize=18)  # the text next to the line
 plt.show()
 
 
@@ -221,13 +269,13 @@ plt.show()
 fig = plt.figure(figsize=(15, 7))  # instantiate a figure
 ax = plt.axes(xlim=(0, N), ylim=(min_W, max_X))  # create an axes object
 
-line_w, = ax.step([], [], where='mid', lw=1, color='#0492c2', alpha=0.8, label='without DL')  # line for W
-line_x, = ax.step([], [], where='mid', lw=1, color='#ff4500', alpha=0.8, label='with DL')  # line for X
+line_w, = ax.step([], [], where='mid', lw=1, color='#0492c2', alpha=0.8, label='Static Menu')  # line for W
+line_x, = ax.step([], [], where='mid', lw=1, color='#ff4500', alpha=0.8, label='Dynamic Menu')  # line for X
 diff_line, = ax.plot([], [], 'ko-', lw=2)  # line for the difference
 text = ax.text(0, 0, '', fontsize=18)
 
 # formatting options
-ax.set_title('Profits using DL Menu Engineering', fontsize=30)
+ax.set_title('Static Menu vs. Dynamic Menu', fontsize=30)
 #ax.set_xticks(np.linspace(0, T, 2*T + 1))
 ax.set_xlabel('Time', fontsize=18)
 ax.set_ylabel('Unit Profit $', fontsize=18)
@@ -254,5 +302,5 @@ def animate(i):
     
 # call the animator	 
 anim = animation.FuncAnimation(fig, animate, frames=frames, interval=15, blit=True)
-# save the animation as mp4 video file 
-#anim.save('drift_no_vol_bm_new.gif',writer='imagemagick')
+# save the animation as GIF file 
+anim.save('menu_time_series_new.gif',writer='imagemagick')

@@ -14,9 +14,9 @@ import cv2
 import sys
 
 imagePath = "pictures/mcd_very_long.jpg"
-cascPath = "haarcascade_customer.xml"
+trainedWeights = "trained_customer.xml"
 
-customerCascade =  cv2.CascadeClassifier(cascPath)
+customerTrainedWeights =  cv2.CascadeClassifier(trainedWeights)
 
 # Read the image
 image = cv2.imread(imagePath)
@@ -24,7 +24,7 @@ gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 # detect customer in pic
 
-customers = customerCascade.detectMultiScale(
+customers = customerTrainedWeights.detectMultiScale(
         gray,
         scaleFactor=1.2, # controlls fine (smaller) vs coarse (larger) trade off, needs to > 1.0
         minNeighbors=5, # used to combine overlapping small boxes into big one
@@ -38,7 +38,7 @@ for (x, y, w, h) in customers:
     cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
 # cv2.imshow("customers found", image)
-status = cv2.imwrite('customers_saved.jpg', image)
+status = cv2.imwrite('customers_detect.jpg', image)
 print ("Image written to file-system : ",status)
 print(imagePath)
 
