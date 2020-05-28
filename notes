@@ -9,3 +9,20 @@ About HOG
 Here we utilize the OpenCV libraries and apply the Histograms of Oriented Gradients (HOG) algorithm to create a computer vision application for people detection/counting.
 
 Here, "histogram" refers to a distribution (for example, a cluster of similar things, such as edges), "oriented" means directions and "gradients" refer to x, y derivatives (as in calculus, we’re looking for slopes here). Two types of gradients are used as features: edges (which include curves) and intensity. Curves and edges are the main idea for this type of problem (detection of objects such as people), and for HOG filter approaches in general. A HOG filter is a linear classifier, which means that it’s very good at sorting things into “buckets” based on multi-dimensional features (such as curves and edges).
+
+https://github.com/darpan-jain/crowd-counting-using-tensorflow
+https://github.com/tensorflow/models/tree/master/research/object_detection
+https://www.kaggle.com/auddin721/starter-crowd-counting-5924929a-a
+
+https://www.kaggle.com/fmena14/crowd-counting
+Good practise with 1.72 GB image data set
+https://towardsdatascience.com/importance-of-distance-metrics-in-machine-learning-modelling-e51395ffe60d
+https://www.crcv.ucf.edu/projects/crowd/
+
+https://www.analyticsvidhya.com/blog/2019/02/building-crowd-counting-model-python/
+https://github.com/CommissarMa/Crowd_counting_from_scratch
+https://github.com/leeyeehoo/CSRNet-pytorch
+https://www.analyticsvidhya.com/blog/2018/06/understanding-building-object-detection-model-python/?utm_medium=crowdcountingarticle&utm_source=blog
+https://towardsdatascience.com/beginners-ask-how-many-hidden-layers-neurons-to-use-in-artificial-neural-networks-51466afa0d3e
+https://medium.com/deep-learning-turkey/google-colab-free-gpu-tutorial-e113627b9f5d
+https://medium.com/secure-and-private-ai-writing-challenge/implementation-of-csrnet-crowd-counting-project-for-udacity-project-showcase-a451b4397d71
