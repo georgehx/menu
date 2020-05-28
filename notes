@@ -1,0 +1,11 @@
+2
+
+I have been trying to use HAAR to detect human, and it turns out to give too many false positives.
+I think HAAR is only suitable for face or eye detection.
+
+You need to change scale factor and minimum neighbours in HAAR cascade which is not same for all the image. So it's better to use HOG.
+
+About HOG
+Here we utilize the OpenCV libraries and apply the Histograms of Oriented Gradients (HOG) algorithm to create a computer vision application for people detection/counting.
+
+Here, "histogram" refers to a distribution (for example, a cluster of similar things, such as edges), "oriented" means directions and "gradients" refer to x, y derivatives (as in calculus, we’re looking for slopes here). Two types of gradients are used as features: edges (which include curves) and intensity. Curves and edges are the main idea for this type of problem (detection of objects such as people), and for HOG filter approaches in general. A HOG filter is a linear classifier, which means that it’s very good at sorting things into “buckets” based on multi-dimensional features (such as curves and edges).
